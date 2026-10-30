@@ -5,6 +5,7 @@ Created on Fri Sep 18 14:53:00 2020
 
 @author: fatih
 """
+import atexit
 import json
 import locale
 import os
@@ -43,6 +44,8 @@ def main():
         fd, path = tempfile.mkstemp(prefix="pardus-update-", suffix=".list")
         with os.fdopen(fd, "w") as sfile:
             sfile.write(sourceslist)
+        # also removed when apt fails half way and the script exits
+        atexit.register(lambda: os.path.exists(path) and os.unlink(path))
         return path
 
     def subupdate():
